@@ -1,22 +1,22 @@
-function [] = easyarrow(x1, y1, z1, x2, y2, z2, varargin)
+function [] = easyarrow(x1, x2, y1, y2, varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
     p = inputParser;
     
     addRequired(p, 'x1', @isnumeric)
-    addRequired(p, 'y1', @isnumeric)
-    addOptional(p, 'z1', NaN, @isnumeric)
     addRequired(p, 'x2', @isnumeric)
+    addRequired(p, 'y1', @isnumeric)
     addRequired(p, 'y2', @isnumeric)
+    addOptional(p, 'z1', NaN, @isnumeric)
     addOptional(p, 'z2', NaN, @isnumeric)
     
     addParameter(p, 'solid', 0)
     
-    parse(p, x1, y1, z1, x2, y2, z2, varargin{:});
+    parse(p, x1, x2, y1, y2, varargin{:});
     
     ip = p.Results;
     
-    
+    axis equal;
     
     %% Preparation
     % Z Vector
@@ -37,15 +37,15 @@ function [] = easyarrow(x1, y1, z1, x2, y2, z2, varargin)
     end
     
     oldhold = ishold;
+    hold on;
+    
+    alpha = 0.3;
+    beta = 0.1;
     
     %% 2D arrow
     if(isnan(ip.z1))
-        hold on
         plot([ip.x1; ip.x2], [ip.y1; ip.y2], 'k') % Plot stem of arrow
 
-        alpha = 0.5;
-        beta = 0.5;
-        
         % Calculate the arrowhead
         x = ip.x2 - ip.x1;
         y = ip.y2 - ip.y1;
@@ -58,19 +58,35 @@ function [] = easyarrow(x1, y1, z1, x2, y2, z2, varargin)
         else
             plot(u, v, 'k') % plot arrowhead as lines
         end
-        
-        % Return to old hold state
-        if(~oldhold)
-            hold off
-        end
+
     end
     %% 3D arrow
     if(~isnan(ip.z1))
-        hold on
+        plot3([ip.x1; ip.x2], [ip.y1; ip.y2], [ip.z1; ip.z2], 'k') % Plot stem of arrow
+
+        % Calculate the arrowhead
+        x = ip.x2 - ip.x1;
+        y = ip.y2 - ip.y1;
+        z = ip.z2 - ip.z1;
         
-        plot3([ip.x1 ip.x2], [ip.y1 ip.y2], [ip.z1 ip.z2], 'k') % Plot stem of arrow
+        u = [ip.x2-alpha*(x+beta*y); ip.x2; ip.x2-alpha*(x-beta*y)];
+        v = [ip.y2-alpha*(y-beta*x); ip.y2; ip.y2-alpha*(y+beta*x)];
+        w = [ip.z2-alpha*(z); ip.z2; ip.z2-alpha*(z)];
+        
+        if(ip.solid)
+            fill3(u, v, w, 'k') % plot arrowhead as solid patch
+        else
+            plot3(u, v, w, 'k') % plot arrowhead as lines
+        end
+        
         
     end
+    
+    %% Finish
+    % Return to old hold state
+        if(~oldhold)
+            hold off
+        end
     
     
     
