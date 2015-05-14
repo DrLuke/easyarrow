@@ -20,7 +20,7 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     addParameter(p, 'headlength', 0.3, @isnumeric)
     addParameter(p, 'headwidth', 0.2, @isnumeric)
     addParameter(p, 'stemstyle', 'k', @isstring)
-    addParameter(p, 'stemwidth', 1, @isnumeric)
+    addParameter(p, 'linewidth', 1, @isnumeric)
     addParameter(p, 'headstyle', 'k', @isstring)
     
     parse(p, x1, x2, y1, y2, varargin{:});
@@ -52,7 +52,7 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     %% 2D arrow
     if(isnan(ip.z1))
         %TODO: On solid == true, only plot stem until beginning of head
-        plot([ip.x1; ip.x2], [ip.y1; ip.y2], ip.stemstyle, 'linewidth', ip.stemwidth) % Plot stem of arrow
+        plot([ip.x1; ip.x2], [ip.y1; ip.y2], ip.stemstyle, 'linewidth', ip.linewidth) % Plot stem of arrow
 
         % Calculate the arrowhead
         x = ip.x2 - ip.x1;
@@ -64,14 +64,14 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
         if(ip.solid)
             fill(u, v, ip.headstyle) % plot arrowhead as solid patch
         else
-            plot(u, v, ip.headstyle) % plot arrowhead as lines
+            plot(u, v, ip.headstyle, 'linewidth', ip.linewidth) % plot arrowhead as lines
         end
 
     end
     %% 3D arrow
     if(~isnan(ip.z1))
         %TODO: On solid == true, only plot stem until beginning of head
-        plot3([ip.x1; ip.x2], [ip.y1; ip.y2], [ip.z1; ip.z2], ip.stemstyle, 'linewidth', ip.stemwidth) % Plot stem of arrow
+        plot3([ip.x1; ip.x2], [ip.y1; ip.y2], [ip.z1; ip.z2], ip.stemstyle, 'linewidth', ip.linewidth) % Plot stem of arrow
 
         % Calculate the arrowhead
         x = ip.x2 - ip.x1;
@@ -93,7 +93,7 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
         if(ip.solid)
             fill3(u, v, w, ip.headstyle) % plot arrowhead as solid patch
         else
-            plot3(u, v, w, ip.headstyle) % plot arrowhead as lines
+            plot3(u, v, w, ip.headstyle, 'linewidth', ip.linewidth) % plot arrowhead as lines
         end
     end
     
