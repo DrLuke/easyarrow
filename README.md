@@ -1,6 +1,6 @@
-# simplearrow
+# easyarrow
 
-Simply plot arrows using a single command.
+Easily plot single or multiple arrows using a single command.
 
 ## Arguments
 ### 2D-Arrows
