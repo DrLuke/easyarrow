@@ -1,6 +1,5 @@
 function [] = easyarrow(x1, x2, y1, y2, varargin)
 %UNTITLED2 Summary of this function goes here
-%   
 %   Quick Examples:
 %   easyarrow([0], [1], [0], [1])
 %   easyarrow([0 30], [20 50], [10 10], [30 30], [0 10], [10 -20], 'absolutelength', 10, 'solid', 1)
@@ -16,11 +15,12 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     addOptional(p, 'z1', NaN, @isnumeric)
     addOptional(p, 'z2', NaN, @isnumeric)
     
-    addParameter(p, 'solid', 0, @isnumeric)
+    addParameter(p, 'solid', 1, @isnumeric)
     addParameter(p, 'absolutelength', 0, @isnumeric)
     addParameter(p, 'headlength', 0.3, @isnumeric)
     addParameter(p, 'headwidth', 0.2, @isnumeric)
     addParameter(p, 'stemstyle', 'k', @isstring)
+    addParameter(p, 'stemwidth', 1, @isnumeric)
     addParameter(p, 'headstyle', 'k', @isstring)
     
     parse(p, x1, x2, y1, y2, varargin{:});
@@ -51,7 +51,8 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     
     %% 2D arrow
     if(isnan(ip.z1))
-        plot([ip.x1; ip.x2], [ip.y1; ip.y2], ip.stemstyle) % Plot stem of arrow
+        %TODO: On solid == true, only plot stem until beginning of head
+        plot([ip.x1; ip.x2], [ip.y1; ip.y2], ip.stemstyle, 'linewidth', ip.stemwidth) % Plot stem of arrow
 
         % Calculate the arrowhead
         x = ip.x2 - ip.x1;
@@ -69,7 +70,8 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     end
     %% 3D arrow
     if(~isnan(ip.z1))
-        plot3([ip.x1; ip.x2], [ip.y1; ip.y2], [ip.z1; ip.z2], ip.stemstyle) % Plot stem of arrow
+        %TODO: On solid == true, only plot stem until beginning of head
+        plot3([ip.x1; ip.x2], [ip.y1; ip.y2], [ip.z1; ip.z2], ip.stemstyle, 'linewidth', ip.stemwidth) % Plot stem of arrow
 
         % Calculate the arrowhead
         x = ip.x2 - ip.x1;
