@@ -1,6 +1,12 @@
 function [] = easyarrow(x1, x2, y1, y2, varargin)
 %UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%   
+%   Quick Examples:
+%   easyarrow([0], [1], [0], [1])
+%   easyarrow([0 30], [20 50], [10 10], [30 30], [0 10], [10 -20], 'absolutelength', 10, 'solid', 1)
+%   
+%
+    %% Input Parsing
     p = inputParser;
     
     addRequired(p, 'x1', @isnumeric)
@@ -11,12 +17,13 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
     addOptional(p, 'z2', NaN, @isnumeric)
     
     addParameter(p, 'solid', 0)
+    addParameter(p, 'absolutelength', 0)
+    addParameter(p, 'headlength', 0.3)
+    addParameter(p, 'headwidth', 0.2)
     
     parse(p, x1, x2, y1, y2, varargin{:});
     
     ip = p.Results;
-    
-    axis equal;
     
     %% Preparation
     % Z Vector
@@ -36,11 +43,9 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
         end
     end
     
+    % Used to restore hold state before function call
     oldhold = ishold;
     hold on;
-    
-    alpha = 0.3;
-    beta = 0.1;
     
     %% 2D arrow
     if(isnan(ip.z1))
@@ -50,8 +55,8 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
         x = ip.x2 - ip.x1;
         y = ip.y2 - ip.y1;
         
-        u = [ip.x2-alpha*(x+beta*y); ip.x2; ip.x2-alpha*(x-beta*y)];
-        v = [ip.y2-alpha*(y-beta*x); ip.y2; ip.y2-alpha*(y+beta*x)];
+        u = [ip.x2-ip.headlength*(x+ip.headwidth*y); ip.x2; ip.x2-ip.headlength*(x-ip.headwidth*y)];
+        v = [ip.y2-ip.headlength*(y-ip.headwidth*x); ip.y2; ip.y2-ip.headlength*(y+ip.headwidth*x)];
         
         if(ip.solid)
             fill(u, v, 'k') % plot arrowhead as solid patch
@@ -69,29 +74,29 @@ function [] = easyarrow(x1, x2, y1, y2, varargin)
         y = ip.y2 - ip.y1;
         z = ip.z2 - ip.z1;
         
-        u = [ip.x2-alpha*(x+beta*y); ip.x2; ip.x2-alpha*(x-beta*y)];
-        v = [ip.y2-alpha*(y-beta*x); ip.y2; ip.y2-alpha*(y+beta*x)];
-        w = [ip.z2-alpha*(z); ip.z2; ip.z2-alpha*(z)];
+        if(~ip.absolutelength <= 0)
+            ip.headlength = 1;
+            vecnorm = sqrt(x.^2 + y.^2 + z.^2);
+            x = (x./vecnorm) .* ip.absolutelength;
+            y = (y./vecnorm) .* ip.absolutelength;
+            z = (z./vecnorm) .* ip.absolutelength;
+        end
+        
+        u = [ip.x2-ip.headlength*(x+ip.headwidth*y); ip.x2; ip.x2-ip.headlength*(x-ip.headwidth*y)];
+        v = [ip.y2-ip.headlength*(y-ip.headwidth*x); ip.y2; ip.y2-ip.headlength*(y+ip.headwidth*x)];
+        w = [ip.z2-ip.headlength*z; ip.z2; ip.z2-ip.headlength*z];
         
         if(ip.solid)
             fill3(u, v, w, 'k') % plot arrowhead as solid patch
         else
             plot3(u, v, w, 'k') % plot arrowhead as lines
         end
-        
-        
     end
     
     %% Finish
     % Return to old hold state
-        if(~oldhold)
-            hold off
-        end
-    
-    
-    
-    
-
-
+    if(~oldhold)
+        hold off
+    end
 end
 
